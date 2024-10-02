@@ -7,13 +7,28 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {}
 
 void GameScene::Initialize() {
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	viewProjection_.Initialize();
+
+	// テクスチャを読み込む
+	playerHandle_ = TextureManager::Load("uvChecker.png");
+	// モデルデータの生成
+	playerModel_.reset(Model::Create());
+
+	///=====プレイヤーの生成============
+	player_ = std::make_unique<Player>();
+	// 初期化
+	player_->Initialize(playerModel_.get(), playerHandle_);
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	// プレイヤー
+	player_->Update();
+
+}
 
 void GameScene::Draw() {
 
@@ -41,6 +56,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
